@@ -1,0 +1,50 @@
+from flask import Flask, request, render_template_string
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    # Get client LAN IP (from request)
+    lan_ip = request.remote_addr
+
+    template = """<!DOCTYPE html>
+<html>
+<head>
+    <title>Local IP & ISP Info</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; background: #f0f0f0; }
+        .card { display: inline-block; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        h1 { margin-bottom: 20px; }
+        div.info { font-size: 1.2em; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🌐 Your Connection Info</h1>
+        <div class="info"><b>LAN IP:</b> {{ lan_ip }}</div>
+        <div class="info"><b>Public IP:</b> <span id="public_ip">Loading...</span></div>
+        <div class="info"><b>ISP / Org:</b> <span id="org">Loading...</span></div>
+        <div class="info"><b>Country:</b> <span id="country">Loading...</span></div>
+    </div>
+
+    <script>
+        fetch("https://ipapi.co/json/")
+            .then(resp => resp.json())
+            .then(data => {
+                document.getElementById("public_ip").textContent = data.ip || "Unknown";
+                document.getElementById("org").textContent = data.org || "Unknown";
+                document.getElementById("country").textContent = data.country_name || "Unknown";
+            })
+            .catch(err => {
+                document.getElementById("public_ip").textContent = "Error";
+                document.getElementById("org").textContent = "Error";
+                document.getElementById("country").textContent = "Error";
+            });
+    </script>
+</body>
+</html>
+"""
+    return render_template_string(template, lan_ip=lan_ip)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
