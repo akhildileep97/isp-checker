@@ -1,6 +1,3 @@
-Here is your **fixed and fully formatted README.md** — everything repaired, proper Markdown headers restored, emoji spacing fixed, and code blocks corrected.
-
-You can copy-paste this directly into your repo:
 
 ---
 
